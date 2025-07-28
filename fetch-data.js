@@ -1,30 +1,29 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const fetchBtn = document.getElementById('fetch-posts');
-  const postsContainer = document.getElementById('posts');
+// fetch-data.js
 
-  fetchBtn.addEventListener('click', () => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((response) => response.json())
-      .then((posts) => {
-        postsContainer.innerHTML = ''; // Clear previous posts
-        posts.forEach((post) => {
-          const postElement = document.createElement('div');
-          postElement.className = 'post';
+async function fetchUserData() {
+  const apiUrl = 'https://jsonplaceholder.typicode.com/users';
+  const dataContainer = document.getElementById('api-data');
 
-          const title = document.createElement('h3');
-          title.textContent = post.title;
+  try {
+    const response = await fetch(apiUrl);
+    const users = await response.json();
 
-          const body = document.createElement('p');
-          body.textContent = post.body;
+    // Clear the loading message
+    dataContainer.innerHTML = '';
 
-          postElement.appendChild(title);
-          postElement.appendChild(body);
+    // Create a list and populate with user names
+    const userList = document.createElement('ul');
+    users.forEach(user => {
+      const listItem = document.createElement('li');
+      listItem.textContent = user.name;
+      userList.appendChild(listItem);
+    });
 
-          postsContainer.appendChild(postElement);
-        });
-      })
-      .catch((error) => {
-        postsContainer.innerHTML = `<p class="error">Failed to load posts: ${error}</p>`;
-      });
-  });
-});
+    dataContainer.appendChild(userList);
+  } catch (error) {
+    dataContainer.innerHTML = '';
+    dataContainer.textContent = 'Failed to load user data.';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchUserData);
